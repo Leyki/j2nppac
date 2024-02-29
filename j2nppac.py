@@ -173,7 +173,10 @@ else:
     patches = reorder_patches(patches)
 
 #interface
-    print(*patches)
+    line = ""
+    for i, patch in enumerate(patches):
+        line += patch + "\n" if i % 4 == 3 else f"{patch:<16}"
+    print(line)
 
     patch = ""
     while(True):

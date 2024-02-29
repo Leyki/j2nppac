@@ -37,8 +37,8 @@ def find_patch_place(patch: str, ordered: list):
             return oi
     return -1
 
-raw_names  = ("1.24a", "1.24b", "1.27a", "1.27b")
-norm_names = ("1.24.1", "1.24.2", "1.27.1", "1.27.2")
+raw_names  = ("1.17a", "1.18a", "1.24a", "1.24b", "1.27a", "1.27b")
+norm_names = ("1.17.1", "1.18.1", "1.24.1", "1.24.2", "1.27.1", "1.27.2")
 
 def reorder_patches(patches: list):
     unordered = copy.deepcopy(patches)
