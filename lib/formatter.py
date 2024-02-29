@@ -75,10 +75,10 @@ md_link_pattern = re.compile(r"\[([^\[\]]*)\]\(([^\(\)]*)\)")
 def remove_md(line: str):
     for pattern in MD_INLINE_PATTERNS:
         line = pattern.sub(r"\1", pattern.sub(r"\1", line))
-    line = md_link_pattern.sub(r"\1 - \2", line) # links
+    line = md_link_pattern.sub(r"\1 - \2", line)
     return line
 
-unnaxeable = ["@", "-", "*", "|"]
+unnaxeable = {"@", "-", "*", "|"}
 
 def format_descr(func: dict, width: int, length: int, separator: int):
     result = ""
@@ -89,6 +89,7 @@ def format_descr(func: dict, width: int, length: int, separator: int):
         if line.startswith("```"): code_open = not code_open ; continue
         if code_open: result += line
         
+        line = line.strip()
         if line == "":
             if carried_lfs == 1: result += "\n"
             if carried_lfs > 1: continue
@@ -104,7 +105,7 @@ def format_descr(func: dict, width: int, length: int, separator: int):
     result = wrap_text(result, width)
     result = "\n" * separator + result.strip("\n ")
     result = escape_xml(result)
-    result = textwrap.shorten(result, length, replace_whitespace=False)
+    result = textwrap.shorten(result, length, replace_whitespace=False) # todo: this doesn't shorten correctly due to escaped chars
     return result
 
 
