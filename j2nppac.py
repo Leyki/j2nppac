@@ -1,8 +1,8 @@
 import re
 from lib.formatter import *
 from lib.patches   import *
-from lib.ini   import *
-from lib.jass import parse_jass, types
+from lib.ini       import *
+from lib.jass      import parse_jass
 
 in_jass                 = ["common.j", "Blizzard.j"]
 in_folder               = "in/"
@@ -123,44 +123,44 @@ with open(out_name + ".xml", "w", encoding="utf8") as out:
         elif chunk["kind"] == "function":
             if filter_functions and chunk["name"] in filtered["functions"]: continue
 
-            if chunk["params"] == []:
+            if chunk["params"] == {}:
                 out.write(t*2+f'<KeyWord name="{chunk["name"]}" func="yes" />\n')
             else:
                 out.write(t*2+f'<KeyWord name="{chunk["name"]}" func="yes" >\n')
-            if chunk["params"]["takes"] == []: 
-                if chunk["descr"] != []:
-                    out.write(t*3+f'<Overload retVal="{chunk["params"]["returns"]}" descr="{format_descr(chunk, width, length, separator)}" />\n')
+                if chunk["params"]["takes"] == []: 
+                    if chunk["descr"] != []:
+                        out.write(t*3+f'<Overload retVal="{chunk["params"]["returns"]}" descr="{format_descr(chunk, width, length, separator)}" />\n')
+                    else:
+                        out.write(t*3+f'<Overload retVal="{chunk["params"]["returns"]}" />\n')
                 else:
-                    out.write(t*3+f'<Overload retVal="{chunk["params"]["returns"]}" />\n')
-            else:
-                if chunk["descr"] != []:
-                    out.write(t*3+f'<Overload retVal="{chunk["params"]["returns"]}" descr="{format_descr(chunk, width, length, separator)}" >\n')
-                else:
-                    out.write(t*3+f'<Overload retVal="{chunk["params"]["returns"]}">\n')
-                    
-                if use_param_abbreviatures:
-                    for take in chunk["params"]["takes"]:
-                        take["type"] = abbreviate(take["type"], abbrs["types"])
-                        take["name"] = abbreviate(take["name"], abbrs["names"])
-            
-                early_wrap = 4 # todo, make into a func or something
-                # wrap earlier than description so that it hopefully looks nicer that way
-                carried_len = len(chunk["name"]) + len(chunk["params"]["takes"]) + 3 + early_wrap 
-                for take in chunk["params"]["takes"]:
-                    carried_len += 3 + len(take["type"]) + len(take["name"])
-                    if carried_len >= width:
+                    if chunk["descr"] != []:
+                        out.write(t*3+f'<Overload retVal="{chunk["params"]["returns"]}" descr="{format_descr(chunk, width, length, separator)}" >\n')
+                    else:
+                        out.write(t*3+f'<Overload retVal="{chunk["params"]["returns"]}">\n')
                         
-                        if len(take["name"]) > 8:
-                            remanent = width - carried_len
-                            take["name"] =  take["name"][0:remanent] + "&#x0a;" + take["name"][remanent: ]
-                            carried_len = len(take["name"]) - remanent + early_wrap
-                        else:
-                            carried_len = early_wrap
-                            take["name"] = take["name"] + "&#x0a;"
+                    if use_param_abbreviatures:
+                        for take in chunk["params"]["takes"]:
+                            take["type"] = abbreviate(take["type"], abbrs["types"])
+                            take["name"] = abbreviate(take["name"], abbrs["names"])
+                
+                    early_wrap = 4 # todo, make into a func or something
+                    # wrap earlier than description so that it hopefully looks nicer that way
+                    carried_len = len(chunk["name"]) + len(chunk["params"]["takes"]) + 3 + early_wrap 
+                    for take in chunk["params"]["takes"]:
+                        carried_len += 3 + len(take["type"]) + len(take["name"])
+                        if carried_len >= width:
+                            
+                            if len(take["name"]) > 8:
+                                remanent = width - carried_len
+                                take["name"] =  take["name"][0:remanent] + "&#x0a;" + take["name"][remanent: ]
+                                carried_len = len(take["name"]) - remanent + early_wrap
+                            else:
+                                carried_len = early_wrap
+                                take["name"] = take["name"] + "&#x0a;"
 
-                    out.write(t*4+f'<Param name="{take["type"]} {take["name"]}"/>\n')
-                out.write(t*3+f'</Overload>\n')
-            out.write(t*2+f'</KeyWord>\n')
+                        out.write(t*4+f'<Param name="{take["type"]} {take["name"]}"/>\n')
+                    out.write(t*3+f'</Overload>\n')
+                out.write(t*2+f'</KeyWord>\n')
         
     out.write(t*1+"</AutoComplete>\n")
     out.write("</NotepadPlus>\n")

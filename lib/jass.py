@@ -34,12 +34,12 @@ def parse_jass(file_name: str, keep_params=False, keep_descr=False, keep_extra=F
             parse = line.strip()
 
             # descriptions
-            if keep_descr:
-                if   parse.startswith("/**"):descr_open = True  ; continue
-                elif parse.startswith("*/"): descr_open = False ; continue
-                if descr_open: 
-                    descr.append(line) ; continue
-            
+            if  parse.startswith("/**"):descr_open = True  ; continue
+            elif parse.startswith("*/"): descr_open = False ; continue
+            if descr_open:
+                if keep_descr: descr.append(line)
+                continue
+
             if not keep_line: line = None
             
             parse = parse.replace(",", " ")
