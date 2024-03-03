@@ -1,6 +1,6 @@
 
 # ini not ini
-def parse_ini(file: str, sections: list[str]):
+def parse_ini_sections(file: str, sections: list[str]):
     with open(file, "r", encoding="utf8") as ini:
         parsing = -1
         result = {}
@@ -21,10 +21,9 @@ def parse_ini(file: str, sections: list[str]):
             result[sections[parsing]].append(line)
     return result
 
-def parse_ini_all(file: str):
+def _parse_ini(result: dict, file: str):
     with open(file, "r", encoding="utf8") as ini:
         parsing = -1
-        result = {}
 
         for line in ini:
             line = line.strip()
@@ -37,4 +36,14 @@ def parse_ini_all(file: str):
                 result[parsing] = []
 
             result[parsing].append(line)
+
+def parse_ini(file: str):
+    result = {}
+    _parse_ini(result, file)
+    return result
+
+def parse_ini_files(files: list):
+    result = {}
+    for file in files:
+        _parse_ini(result, file)
     return result

@@ -1,6 +1,6 @@
 # j2nppac
 
-Parses JASS natives, functions, constants and types into a npp autocomplete format file along with descriptions and quasi-Markdown syntax support.
+Parses JASS natives, functions, constants and types into a npp autocomplete file along with descriptions and quasi-Markdown syntax support.
 
 ## Usage
 
@@ -9,7 +9,6 @@ Jass script files you can find in [Jassdoc](https://github.com/lep/jassdoc) and 
 
 **Jassdoc** should get you the latest scripts used by retail while **Wc3 JASS history scripts** should get you any version you could ever need.
 Or you may also just extract the scripts from the game files yourself and feed it your own made data as well.
-If you're using jassdoc's files the ability to parse up to a version of the game should be available but versioning declaration remains to be automatized.
 
 If you want to write your own documentation for functions see: [Jassdoc#Annotations](https://github.com/lep/jassdoc?tab=readme-ov-file#how-to-write-annotations).
 

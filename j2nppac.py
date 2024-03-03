@@ -7,8 +7,6 @@ from lib.jass      import parse_jass
 in_jass                 = ["common.j", "Blizzard.j"]
 in_folder               = "in/"
 out_name                = "JASS"
-append_version_number   = False
-
 
 include_types           = False
 
@@ -56,11 +54,11 @@ if filter_consts: to_filter.append("constants")
 if filter_functions: to_filter.append("functions")
 
 if to_filter != []:
-    filtered = parse_ini("filter.ini", to_filter)
+    filtered = parse_ini_sections("filter.ini", to_filter)
 
 # build abbreviatures
 if use_param_abbreviatures:
-    abbreviations_lines = parse_ini_all("abbreviatures.ini")
+    abbreviations_lines = parse_ini("abbreviatures.ini")
     for key in abbreviations_lines.keys():
         for line in abbreviations_lines[key]:
             name  = name_abbr_pattern.match(line)
@@ -74,30 +72,6 @@ if use_param_abbreviatures:
             else: 
                 print(f'Invalid abbrevation - "{line}"')
 
-# build patches
-patches = find_patches(in_folder, in_jass)
-
-if patches == []: patch = -1
-else:
-    patches = reorder_patches(patches)
-
-# interface
-line = ""
-for i, patch in enumerate(patches):
-    line += patch + "\n" if i % 4 == 3 else f"{patch:<16}"
-print(line)
-
-patch = ""
-while(True):
-    print("Found patch labels. Type a patch number to parse up to that patch or press enter for highest/everything.")
-    patch = input()
-    if patch == "": patch = -1
-    else:
-        for i, v in enumerate(patches):
-            if patch == v: patch = i
-    if type(patch) == int: break
-if patch == len(patches)-1: patch = -1
-if append_version_number: out_name += patches[patch]
 
 # do parsing
 parsed = []
@@ -117,7 +91,7 @@ with open(out_name + ".xml", "w", encoding="utf8") as out:
             out.write(t*2+f'<KeyWord name="{chunk["name"]}" />\n')
 
         elif chunk["kind"] == "constant":
-            if filter_types and chunk["name"] in filtered["constants"]: continue
+            if filter_consts and chunk["name"] in filtered["constants"]: continue
             out.write(t*2+f'<KeyWord name="{chunk["name"]}" />\n')
             
         elif chunk["kind"] == "function":
