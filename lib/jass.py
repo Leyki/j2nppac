@@ -1,7 +1,7 @@
 import re
 
 types = ["integer", "real", "boolean", "string", "handle", "code"] # primitives
-hashed_types = { "integer": None, "real": None, "boolean": None, "string": None, "handle": None, "code": None }
+hashed_types = { "integer", "real", "boolean", "string", "handle", "code" }
 
 spaces_pattern     = re.compile(r"\s+")
 ln_comment_pattern = re.compile(r".//.*")
@@ -19,11 +19,13 @@ returns_hash  = hash("returns")
 def parse_jass(file_name: str, keep_params=False, keep_descr=False, keep_extra=False, keep_line=False) -> list:
     """
     Parses a jass file chunks as found.
-    `chunk = { "kind": str, "name": str, "extra": list, "descr": list, "line": str | None }.`
+    `chunk = { "kind": "type" | "constant", "name": str, "descr": list, "line": str | None }`
+                `| { "kind": "function", "name": str, "params": dict, "descr": list, "line": line | None}`
+                `| { "kind": "extra", "line": str | None }.`
     """
     # nu = 0
     chunks = []
-    extra  = []
+
     descr  = []
     params = {}
     descr_open = False
@@ -56,14 +58,14 @@ def parse_jass(file_name: str, keep_params=False, keep_descr=False, keep_extra=F
             # types
             if parse_hash == type_hash:
                 types.append(parse[i+1])
-                hashed_types[parse[i+1]] = True
-                chunks.append({ "kind": "type", "name": parse[i+1], "extra": extra, "descr": descr, "line": line })
-                descr = [] ; extra = []
+                hashed_types.add(parse[i+1])
+                chunks.append({ "kind": "type", "name": parse[i+1], "descr": descr, "line": line })
+                descr = []
             # globals
             elif parse[i] in hashed_types:
                 if hash(parse[i+1]) == array_hash: i += 1
-                chunks.append({ "kind": "constant", "name": parse[i+1], "extra": extra, "descr": descr, "line": line })
-                descr = [] ; extra = []
+                chunks.append({ "kind": "constant", "name": parse[i+1], "descr": descr, "line": line })
+                descr = []
             # functions
             elif parse_hash == func_hash or parse_hash == native_hash: 
                 # native/function {name} takes [{type} {name}] returns {type}
@@ -78,12 +80,12 @@ def parse_jass(file_name: str, keep_params=False, keep_descr=False, keep_extra=F
                             i += 2
                     params["returns"] = parse[i+4]
 
-                chunks.append({ "kind": "function", "name": name, "params": params, "extra": extra, "descr": descr, "line": line })
+                chunks.append({ "kind": "function", "name": name, "params": params, "descr": descr, "line": line })
 
-                descr = [] ; extra = []
+                descr = []
             # extra
             elif keep_extra:
-                extra.append(line)
+                chunks.append({ "kind": "extra", "line": line })
             
         # print(nu, f"'{parse}'")
     return chunks
@@ -110,7 +112,7 @@ def parse_jass_names(file_name: str) -> list:
             # types
             if parse_hash == type_hash:
                 types.append(parse[i+1])
-                hashed_types[parse[i+1]] = True
+                hashed_types.add(parse[i+1])
                 names.append(parse[i+1])
             # globals
             elif parse[i] in hashed_types:
