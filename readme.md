@@ -1,11 +1,11 @@
 # j2nppac
 
-Parses JASS natives, functions, constants and types into a npp autocomplete file along with descriptions and quasi-Markdown syntax support.
+Parses JASS natives, functions, constants and types into a npp autocomplete file along with descriptions support.
 
 ## Usage
 
 Run j2nppac.py, main configurations can be made inside the script.
-Jass script files you can find in [Jassdoc](https://github.com/lep/jassdoc) and [Wc3 jass history scripts](https://github.com/Luashine/wc3-jass-history-scripts>). `common.j` must always be parsed first to gather types.
+Jass script files you can find in [Jassdoc](https://github.com/lep/jassdoc) and [Wc3 jass history scripts](https://github.com/Luashine/wc3-jass-history-scripts). `common.j` must always be parsed first to gather types.
 
 **Jassdoc** should get you the latest scripts used by retail while **Wc3 JASS history scripts** should get you any version you could ever need.
 Or you may also just extract the scripts from the game files yourself and feed it your own made data as well.
